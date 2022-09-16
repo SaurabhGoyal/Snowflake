@@ -11,9 +11,9 @@ Project has just started and is not usable in any environment as it is missing e
 
 ## Logic
 - There are two components - `generator` and `generatorConfig`. Both are private to prevent initialisation with unexpected values. Use exported constructors which perform validations.
-- `generatorConfig` has a default implementation which provides 32768 unique ids per millisecond till year 2079 (~69 years from epoch). These values can be customised to support higher throughput or longer period of valid generation of unique IDs. Default config uses following details -
+- `generatorConfig` has a default implementation which provides 2 ^ 19 (524288) unique ids per millisecond (512 per node, across 1024 nodes) till year 2079 (~69 years from epoch). These values can be customised to support higher throughput or longer period of valid generation of unique IDs. Default config uses following details -
   - epoch - `2010/12/12/23/59/59/0 UTC`.
-  - timestampBits - 48
+  - timestampBits - 44
   - nodeIdBits - 10
 
 ## Hands On
