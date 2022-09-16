@@ -184,3 +184,34 @@ func TestGet(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkGet(b *testing.B) {
+	defaultConfig, _ := InitDefaultGeneratorConfig()
+	cases := []struct {
+		name   string
+		config func() generatorConfig
+	}{
+		{
+			name:   "Default config - Tuned for high distribution of nodes (10 bits) and moderate throughput (9 bits) per node",
+			config: func() generatorConfig { return defaultConfig },
+		},
+		{
+			name: "Custom config - Tuned for low distribution of nodes (6 bits) and high throughput (13 bits) per node",
+			config: func() generatorConfig {
+				config, _ := InitGeneratorConfig(DEFAULT_EPOCH, 44, 6)
+				return config
+			},
+		},
+	}
+	for _, bc := range cases {
+		b.Run(bc.name, func(b *testing.B) {
+			gen, _ := InitGenerator(bc.config(), 1)
+			for i := 0; i < b.N; i++ {
+				_, err := gen.Get()
+				if err != nil {
+					b.Errorf("Error occurred in benchmarking - %v", err)
+				}
+			}
+		})
+	}
+}

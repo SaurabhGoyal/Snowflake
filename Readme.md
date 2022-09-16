@@ -53,3 +53,30 @@ func main() {
 }
 
 ```
+
+## Benchmarks
+- Result for one machine
+```
+➜  uid_generator git:(sg_travis_integ) ✗ go test -v -run=^# -bench=. -count=4 ./... -benchmem
+
+?       github.com/SaurabhGoyal/Snowflake       [no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/SaurabhGoyal/Snowflake/snowflake
+cpu: VirtualApple @ 2.50GHz
+BenchmarkGet
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  566773              2376 ns/op               0 B/op          0 allocs/op
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  549109              2389 ns/op               0 B/op          0 allocs/op
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  519740              2099 ns/op               0 B/op          0 allocs/op
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  508509              2079 ns/op               0 B/op          0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7574332               167.3 ns/op             0 B/op          0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7129860               167.2 ns/op             0 B/op          0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7130806               168.1 ns/op             0 B/op          0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7090597               170.0 ns/op             0 B/op          0 allocs/op
+PASS
+ok      github.com/SaurabhGoyal/Snowflake/snowflake     10.675s
+?       github.com/SaurabhGoyal/Snowflake/uid   [no test files]
+➜  uid_generator git:(sg_travis_integ) ✗
+```

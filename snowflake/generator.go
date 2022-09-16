@@ -28,7 +28,9 @@ func (gen *generator) Get() (uint64, error) {
 	timestamp := gen.getTimeStamp()
 	if timestamp <= gen.lastTS {
 		seqId = gen.seqId + 1
-		if seqId > (1<<gen.config.nodeIdShift - 1) {
+		// log.Printf("ts - %d seqId - %d - s - %d, mv - %d", gen.lastTS, seqId, gen.config.nodeIdShift, (1 << gen.config.nodeIdShift))
+		if seqId > ((1 << gen.config.nodeIdShift) - 1) {
+			// log.Printf("ts - %d seqId - %d - going to sleep", gen.lastTS, seqId)
 			time.Sleep(time.Millisecond)
 			timestamp = gen.getTimeStamp()
 			seqId = 0
