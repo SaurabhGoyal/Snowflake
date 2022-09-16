@@ -41,13 +41,18 @@ jobs:
         with:
           name: unit-tests.xml
           path: unit-tests.xml
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        with:
+          report_paths: unit-tests.xml
       - name: Upload coverage report XML
         uses: actions/upload-artifact@v3
         with:
           name: cobertura-coverage.xml
           path: cobertura-coverage.xml
-      - name: Upload coverage report HTML
-        uses: actions/upload-artifact@v3
+      - name: Code Coverage Summary Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          name: cobertura-coverage.html
-          path: cobertura-coverage.html
+          filename: cobertura-coverage.xml
+          badge: true
+          fail_below_min: true
