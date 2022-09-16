@@ -7,7 +7,7 @@ Snowflake is a go package that provides a simple implementation of unique-id gen
 ```
 
 ## Status
-Project has just started and is not usable in any environment as it is missing edge case testing and benchmarking.
+Project has been tested and benchmarked but not battle tested in production environment yet.
 
 ## Logic
 - There are two components - `generator` and `generatorConfig`. Both are private to prevent initialisation with unexpected values. Use exported constructors which perform validations.
@@ -26,26 +26,26 @@ go get github.com/SaurabhGoyal/Snowflake
 package main
 
 import (
-	"log"
+    "log"
 
-snowflake "github.com/SaurabhGoyal/Snowflake/snowflake"
+    snowflake "github.com/SaurabhGoyal/Snowflake/snowflake"
 )
 
 func main() {
 	// With default config
     config, _ := snowflake.InitDefaultGeneratorConfig()
-	uidGen, _ := snowflake.InitGenerator(config, 1)
-	uid, err := uidGen.Get()
+    uidGen, _ := snowflake.InitGenerator(config, 1)
+    uid, err := uidGen.Get()
     if err != nil {
         panic(err)
     }
     log.Printf("UID - %d", uid)
 
-    // With custom config
+    // With custom config (Ex.- less lifetime, more servers, less throughput per server)
     epoch := uint64(time.Date(2015, 12, 12, 23, 59, 59, 0, time.UTC).UnixMilli())
-    config, _ = snowflake.InitGeneratorConfig(epoch, 50, 7)
-	uidGen, _ = snowflake.InitGenerator(config, 1)
-	uid, err = uidGen.Get()
+    config, _ = snowflake.InitGeneratorConfig(epoch, 41, 14)
+    uidGen, _ = snowflake.InitGenerator(config, 1)
+    uid, err = uidGen.Get()
     if err != nil {
         panic(err)
     }

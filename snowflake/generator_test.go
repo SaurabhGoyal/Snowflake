@@ -9,64 +9,49 @@ import (
 	uid "github.com/SaurabhGoyal/Snowflake/uid"
 )
 
-func validateGen(t *testing.T, config generatorConfig, err error, expectedTimeStampShift uint64, expectedNodeIdShift uint64, expectedErr error) {
-	if (expectedErr != nil && err == nil) || (expectedErr != nil && err.Error() != expectedErr.Error()) {
-		t.Errorf("Error creating config - actual - %v expected = %v", err, expectedErr)
-	}
-	if err != nil {
-		return
-	}
-	if config.timeStampShift != expectedTimeStampShift {
-		t.Errorf("timestamp shift mismatch - actual - %d, expected - %d", config.timeStampShift, expectedTimeStampShift)
-	}
-	if config.nodeIdShift != expectedNodeIdShift {
-		t.Errorf("nodeId shift mismatch - actual - %d, expected - %d", config.nodeIdShift, expectedNodeIdShift)
-	}
-}
-
 func TestInitGenerator(t *testing.T) {
 	tests := []struct {
 		name        string
 		config      generatorConfig
-		nodeId      uint64
+		nodeID      uint64
 		expectedErr error
 	}{
 		{
 			name: "Success",
 			config: generatorConfig{
-				nodeIdBits: 10,
+				nodeIDBits: 10,
 			},
-			nodeId:      12,
+			nodeID:      12,
 			expectedErr: nil,
 		},
 		{
 			name: "Success - node-id with maximum allowed bit size",
 			config: generatorConfig{
-				nodeIdBits: 3,
+				nodeIDBits: 3,
 			},
-			nodeId:      7,
+			nodeID:      7,
 			expectedErr: nil,
 		},
 		{
 			name: "Invalid node-id - larger than bit size",
 			config: generatorConfig{
-				nodeIdBits: 3,
+				nodeIDBits: 3,
 			},
-			nodeId:      12,
+			nodeID:      12,
 			expectedErr: errors.New("nodeid can not be greater than [7] as per config"),
 		},
 		{
 			name: "Invalid node-id - just larger than bit size",
 			config: generatorConfig{
-				nodeIdBits: 3,
+				nodeIDBits: 3,
 			},
-			nodeId:      8,
+			nodeID:      8,
 			expectedErr: errors.New("nodeid can not be greater than [7] as per config"),
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := InitGenerator(tc.config, tc.nodeId)
+			_, err := InitGenerator(tc.config, tc.nodeID)
 			if (tc.expectedErr != nil && err == nil) || (tc.expectedErr != nil && err.Error() != tc.expectedErr.Error()) {
 				t.Errorf("Error creating generator - actual - %v expected = %v", err, tc.expectedErr)
 			}
@@ -96,14 +81,14 @@ func TestGet(t *testing.T) {
 	customConfig, _ := InitGeneratorConfig(customeEpoch, 38, 14)
 	tests := []struct {
 		name         string
-		getGenerator func() uid.UIDGenerator
+		getGenerator func() uid.Generator
 		clientCount  int
 		callCount    int
 		expectedErr  error
 	}{
 		{
 			name: "Success default config - single call by single client",
-			getGenerator: func() uid.UIDGenerator {
+			getGenerator: func() uid.Generator {
 				gen, _ := InitGenerator(defaultConfig, 3)
 				return gen
 			},
@@ -113,7 +98,7 @@ func TestGet(t *testing.T) {
 		},
 		{
 			name: "Success default config - multiple calls by single client",
-			getGenerator: func() uid.UIDGenerator {
+			getGenerator: func() uid.Generator {
 				gen, _ := InitGenerator(defaultConfig, 3)
 				return gen
 			},
@@ -123,7 +108,7 @@ func TestGet(t *testing.T) {
 		},
 		{
 			name: "Success default config - multiple calls by multiple clients",
-			getGenerator: func() uid.UIDGenerator {
+			getGenerator: func() uid.Generator {
 				gen, _ := InitGenerator(defaultConfig, 3)
 				return gen
 			},
@@ -133,7 +118,7 @@ func TestGet(t *testing.T) {
 		},
 		{
 			name: "Success custom config - single call by single client",
-			getGenerator: func() uid.UIDGenerator {
+			getGenerator: func() uid.Generator {
 				gen, _ := InitGenerator(customConfig, 4578)
 				return gen
 			},
@@ -143,7 +128,7 @@ func TestGet(t *testing.T) {
 		},
 		{
 			name: "Success custom config - multiple calls by single client",
-			getGenerator: func() uid.UIDGenerator {
+			getGenerator: func() uid.Generator {
 				gen, _ := InitGenerator(customConfig, 4578)
 				return gen
 			},
@@ -153,7 +138,7 @@ func TestGet(t *testing.T) {
 		},
 		{
 			name: "Success custom config - multiple calls by multiple clients",
-			getGenerator: func() uid.UIDGenerator {
+			getGenerator: func() uid.Generator {
 				gen, _ := InitGenerator(customConfig, 4578)
 				return gen
 			},
@@ -198,7 +183,7 @@ func BenchmarkGet(b *testing.B) {
 		{
 			name: "Custom config - Tuned for low distribution of nodes (7 bits) and high throughput (14 bits) per node",
 			config: func() generatorConfig {
-				config, _ := InitGeneratorConfig(DEFAULT_EPOCH, 42, 7)
+				config, _ := InitGeneratorConfig(defaultEpoch, 42, 7)
 				return config
 			},
 		},

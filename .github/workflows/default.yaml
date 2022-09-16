@@ -24,12 +24,10 @@ jobs:
           go install github.com/boumenot/gocover-cobertura@latest
           go get -d github.com/ggere/gototal-cobertura@latest
           go install github.com/ggere/gototal-cobertura@latest
-      - name: Build binary
-        run: go build .
       - name: Linting
         run: |
-          go vet
-          golint .
+          go vet ./...
+          golint -set_exit_status=0 ./...
       - name: Run tests with coverage
         run: |
           gotestsum --format testname --junitfile unit-tests.xml -- -coverprofile=coverage.out ./...

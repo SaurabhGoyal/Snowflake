@@ -1,7 +1,6 @@
 package snowflake
 
 import (
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -11,8 +10,8 @@ import (
 
 type generator struct {
 	mu     sync.Mutex
-	nodeId uint64
-	seqId  uint64
+	nodeID uint64
+	seqID  uint64
 	lastTS uint64
 	config generatorConfig
 }
@@ -24,34 +23,33 @@ func (gen *generator) getTimeStamp() uint64 {
 func (gen *generator) Get() (uint64, error) {
 	gen.mu.Lock()
 	defer gen.mu.Unlock()
-	seqId := uint64(0)
+	seqID := uint64(0)
 	timestamp := gen.getTimeStamp()
 	if timestamp <= gen.lastTS {
-		seqId = gen.seqId + 1
-		// log.Printf("ts - %d seqId - %d - s - %d, mv - %d", gen.lastTS, seqId, gen.config.nodeIdShift, (1 << gen.config.nodeIdShift))
-		if seqId > ((1 << gen.config.nodeIdShift) - 1) {
-			// log.Printf("ts - %d seqId - %d - going to sleep", gen.lastTS, seqId)
+		seqID = gen.seqID + 1
+		if seqID > ((1 << gen.config.nodeIDShift) - 1) {
 			time.Sleep(time.Millisecond)
 			timestamp = gen.getTimeStamp()
-			seqId = 0
+			seqID = 0
 		}
 	}
 	gen.lastTS = timestamp
-	gen.seqId = seqId
-	uid := timestamp<<gen.config.timeStampShift | gen.nodeId<<gen.config.nodeIdShift | seqId
+	gen.seqID = seqID
+	uid := timestamp<<gen.config.timeStampShift | gen.nodeID<<gen.config.nodeIDShift | seqID
 	return uid, nil
 }
 
-func InitGenerator(config generatorConfig, nodeId uint64) (uid.UIDGenerator, error) {
-	maxNodeId := uint64(1<<config.nodeIdBits - 1)
-	if nodeId > maxNodeId {
-		return &generator{}, errors.New(
-			fmt.Sprintf("nodeid can not be greater than [%d] as per config", maxNodeId),
-		)
+/*
+InitGenerator initialised a unique id generator as per Snowflake algo using given config.
+*/
+func InitGenerator(config generatorConfig, nodeID uint64) (uid.Generator, error) {
+	maxNodeID := uint64(1<<config.nodeIDBits - 1)
+	if nodeID > maxNodeID {
+		return &generator{}, fmt.Errorf("nodeid can not be greater than [%d] as per config", maxNodeID)
 	}
 	return &generator{
-		nodeId: nodeId,
-		seqId:  0,
+		nodeID: nodeID,
+		seqID:  0,
 		lastTS: config.epoch,
 		config: config,
 	}, nil
