@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func validateConfig(t *testing.T, config generatorConfig, err error, expectedTimeStampShift uint64, expectedNodeIDShift uint64, expectedErr error) {
+func validateConfig(t *testing.T, config Config, err error, expectedTimeStampShift uint64, expectedNodeIDShift uint64, expectedErr error) {
 	if (expectedErr != nil && err == nil) || (expectedErr != nil && err.Error() != expectedErr.Error()) {
 		t.Errorf("Error creating config - actual - %v expected = %v", err, expectedErr)
 	}
@@ -37,7 +37,7 @@ func TestInitDefaultGeneratorConfig(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			config, err := InitDefaultGeneratorConfig()
+			config, err := InitDefaultConfig()
 			validateConfig(t, config, err, tc.expectedTimeStampShift, tc.expectedNodeIDShift, tc.expectedErr)
 		})
 	}
@@ -92,7 +92,7 @@ func TestInitGeneratorConfig(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			config, err := InitGeneratorConfig(tc.epoch, tc.timestampBits, tc.nodeIDBits)
+			config, err := InitConfig(tc.epoch, tc.timestampBits, tc.nodeIDBits)
 			validateConfig(t, config, err, tc.expectedTimeStampShift, tc.expectedNodeIDShift, tc.expectedErr)
 		})
 	}

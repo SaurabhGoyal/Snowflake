@@ -8,19 +8,29 @@ import (
 	uid "github.com/SaurabhGoyal/Snowflake/uid"
 )
 
-type generator struct {
+/*
+Generator is a Snowflake based implmentation of UniqueId generation.
+ - It calculates values in each node computationally.
+ - It keeps only two values in its state - 1) last processed timestamp 2) last generated sequence id.
+ - Each instance of generator within one application context must be assigned a node id.
+ - Range of node ids will be dictated by the node-id bits given in the config.
+*/
+type Generator struct {
 	mu     sync.Mutex
 	nodeID uint64
 	seqID  uint64
 	lastTS uint64
-	config generatorConfig
+	config Config
 }
 
-func (gen *generator) getTimeStamp() uint64 {
+func (gen *Generator) getTimeStamp() uint64 {
 	return uint64(time.Now().UnixMilli() - int64(gen.config.epoch))
 }
 
-func (gen *generator) Get() (uint64, error) {
+/*
+Get returns a unique id for current millisecond. If it can not provide a unique id, it waits till next millisecond and resets its sequence to provide a unique id.
+*/
+func (gen *Generator) Get() (uint64, error) {
 	gen.mu.Lock()
 	defer gen.mu.Unlock()
 	seqID := uint64(0)
@@ -42,12 +52,15 @@ func (gen *generator) Get() (uint64, error) {
 /*
 InitGenerator initialises a unique id generator as per Snowflake algo using given config.
 */
-func InitGenerator(config generatorConfig, nodeID uint64) (uid.Generator, error) {
+func InitGenerator(config Config, nodeID uint64) (uid.Generator, error) {
+	if config.timeStampBits <= 0 {
+		return &Generator{}, fmt.Errorf("invalid config")
+	}
 	maxNodeID := uint64(1<<config.nodeIDBits - 1)
 	if nodeID > maxNodeID {
-		return &generator{}, fmt.Errorf("nodeid can not be greater than [%d] as per config", maxNodeID)
+		return &Generator{}, fmt.Errorf("nodeid can not be greater than [%d] as per config", maxNodeID)
 	}
-	return &generator{
+	return &Generator{
 		nodeID: nodeID,
 		seqID:  0,
 		lastTS: config.epoch,

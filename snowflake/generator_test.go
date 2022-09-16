@@ -12,38 +12,50 @@ import (
 func TestInitGenerator(t *testing.T) {
 	tests := []struct {
 		name        string
-		config      generatorConfig
+		config      func() Config
 		nodeID      uint64
 		expectedErr error
 	}{
 		{
 			name: "Success",
-			config: generatorConfig{
-				nodeIDBits: 10,
+			config: func() Config {
+				c, _ := InitConfig(defaultEpoch, defaultTimestampBits, 10)
+				return c
 			},
 			nodeID:      12,
 			expectedErr: nil,
 		},
 		{
 			name: "Success - node-id with maximum allowed bit size",
-			config: generatorConfig{
-				nodeIDBits: 3,
+			config: func() Config {
+				c, _ := InitConfig(defaultEpoch, defaultTimestampBits, 3)
+				return c
 			},
 			nodeID:      7,
 			expectedErr: nil,
 		},
 		{
+			name: "Invalid config",
+			config: func() Config {
+				return Config{}
+			},
+			nodeID:      12,
+			expectedErr: errors.New("invalid config"),
+		},
+		{
 			name: "Invalid node-id - larger than bit size",
-			config: generatorConfig{
-				nodeIDBits: 3,
+			config: func() Config {
+				c, _ := InitConfig(defaultEpoch, defaultTimestampBits, 3)
+				return c
 			},
 			nodeID:      12,
 			expectedErr: errors.New("nodeid can not be greater than [7] as per config"),
 		},
 		{
 			name: "Invalid node-id - just larger than bit size",
-			config: generatorConfig{
-				nodeIDBits: 3,
+			config: func() Config {
+				c, _ := InitConfig(defaultEpoch, defaultTimestampBits, 3)
+				return c
 			},
 			nodeID:      8,
 			expectedErr: errors.New("nodeid can not be greater than [7] as per config"),
@@ -51,7 +63,7 @@ func TestInitGenerator(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := InitGenerator(tc.config, tc.nodeID)
+			_, err := InitGenerator(tc.config(), tc.nodeID)
 			if (tc.expectedErr != nil && err == nil) || (tc.expectedErr != nil && err.Error() != tc.expectedErr.Error()) {
 				t.Errorf("Error creating generator - actual - %v expected = %v", err, tc.expectedErr)
 			}
@@ -76,9 +88,9 @@ func (l *IDLogger) log(t *testing.T, id uint64) error {
 }
 
 func TestGet(t *testing.T) {
-	defaultConfig, _ := InitDefaultGeneratorConfig()
+	defaultConfig, _ := InitDefaultConfig()
 	customeEpoch := uint64(time.Date(2015, 12, 12, 23, 59, 59, 0, time.UTC).UnixMilli())
-	customConfig, _ := InitGeneratorConfig(customeEpoch, 38, 14)
+	customConfig, _ := InitConfig(customeEpoch, 38, 14)
 	tests := []struct {
 		name         string
 		getGenerator func() uid.Generator
@@ -171,19 +183,19 @@ func TestGet(t *testing.T) {
 }
 
 func BenchmarkGet(b *testing.B) {
-	defaultConfig, _ := InitDefaultGeneratorConfig()
+	defaultConfig, _ := InitDefaultConfig()
 	cases := []struct {
 		name   string
-		config func() generatorConfig
+		config func() Config
 	}{
 		{
 			name:   "Default config - Tuned for high distribution of nodes (11 bits) and moderate throughput (10 bits) per node",
-			config: func() generatorConfig { return defaultConfig },
+			config: func() Config { return defaultConfig },
 		},
 		{
 			name: "Custom config - Tuned for low distribution of nodes (7 bits) and high throughput (14 bits) per node",
-			config: func() generatorConfig {
-				config, _ := InitGeneratorConfig(defaultEpoch, 42, 7)
+			config: func() Config {
+				config, _ := InitConfig(defaultEpoch, 42, 7)
 				return config
 			},
 		},
