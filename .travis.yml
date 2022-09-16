@@ -1,0 +1,7 @@
+language: go
+go:
+  - 1.17.x
+install: 
+  - go mod install
+script:
+  - go test -v ./...
