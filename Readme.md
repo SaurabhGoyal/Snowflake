@@ -26,7 +26,7 @@ go get github.com/SaurabhGoyal/Snowflake
 package main
 
 import (
-	"log"
+    "log"
 
     snowflake "github.com/SaurabhGoyal/Snowflake/snowflake"
 )
