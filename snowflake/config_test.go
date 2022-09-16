@@ -30,8 +30,8 @@ func TestInitDefaultGeneratorConfig(t *testing.T) {
 	}{
 		{
 			name:                   "Default",
-			expectedTimeStampShift: 19,
-			expectedNodeIdShift:    9,
+			expectedTimeStampShift: 21,
+			expectedNodeIdShift:    10,
 			expectedErr:            nil,
 		},
 	}

@@ -10,8 +10,8 @@ import (
 const DEFAULT_EPOCH = 1292198399000
 const ID_BITS = uint64(63)
 const MAX_ALLOWED_BITS_FOR_TIMESTAMP_AND_NODE_ID = uint64(59)
-const DEFAULT_TIMESTAMP_BITS = uint64(44)
-const DEFAULT_NODE_ID_BITS = uint64(10)
+const DEFAULT_TIMESTAMP_BITS = uint64(42)
+const DEFAULT_NODE_ID_BITS = uint64(11)
 
 type generatorConfig struct {
 	epoch          uint64

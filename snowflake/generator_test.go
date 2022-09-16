@@ -192,13 +192,13 @@ func BenchmarkGet(b *testing.B) {
 		config func() generatorConfig
 	}{
 		{
-			name:   "Default config - Tuned for high distribution of nodes (10 bits) and moderate throughput (9 bits) per node",
+			name:   "Default config - Tuned for high distribution of nodes (11 bits) and moderate throughput (10 bits) per node",
 			config: func() generatorConfig { return defaultConfig },
 		},
 		{
-			name: "Custom config - Tuned for low distribution of nodes (6 bits) and high throughput (13 bits) per node",
+			name: "Custom config - Tuned for low distribution of nodes (7 bits) and high throughput (14 bits) per node",
 			config: func() generatorConfig {
-				config, _ := InitGeneratorConfig(DEFAULT_EPOCH, 44, 6)
+				config, _ := InitGeneratorConfig(DEFAULT_EPOCH, 42, 7)
 				return config
 			},
 		},

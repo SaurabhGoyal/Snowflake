@@ -11,10 +11,10 @@ Project has just started and is not usable in any environment as it is missing e
 
 ## Logic
 - There are two components - `generator` and `generatorConfig`. Both are private to prevent initialisation with unexpected values. Use exported constructors which perform validations.
-- `generatorConfig` has a default implementation which provides 2 ^ 19 (524288) unique ids per millisecond (512 per node, across 1024 nodes) till year 2079 (~69 years from epoch). These values can be customised to support higher throughput or longer period of valid generation of unique IDs. Default config uses following details -
+- `generatorConfig` has a default implementation which provides 2 ^ 21 (2097152) unique ids per millisecond (1024 per node, across 2048 nodes) till year 2149 (~139 years from epoch). These values can be customised to support higher throughput or longer period of valid generation of unique IDs. Default config uses following details -
   - epoch - `2010/12/12/23/59/59/0 UTC`.
-  - timestampBits - 44
-  - nodeIdBits - 10
+  - timestampBits - 42
+  - nodeIdBits - 11
 
 ## Hands On
 - Install (Assuming you already have a working Go environment, if not please see [this page](https://go.dev/doc/install) first)
@@ -57,7 +57,7 @@ func main() {
 ## Benchmarks
 - Result for one machine
 ```
-➜  uid_generator git:(sg_travis_integ) ✗ go test -v -run=^# -bench=. -count=4 ./... -benchmem
+➜  uid_generator git:(main) ✗ go test -v -run=^# -bench=. -count=4 ./... -benchmem
 
 ?       github.com/SaurabhGoyal/Snowflake       [no test files]
 goos: darwin
@@ -65,18 +65,18 @@ goarch: amd64
 pkg: github.com/SaurabhGoyal/Snowflake/snowflake
 cpu: VirtualApple @ 2.50GHz
 BenchmarkGet
-BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node
-BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  566773              2376 ns/op               0 B/op          0 allocs/op
-BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  549109              2389 ns/op               0 B/op          0 allocs/op
-BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  519740              2099 ns/op               0 B/op          0 allocs/op
-BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(10_bits)_and_moderate_throughput_(9_bits)_per_node-8                  508509              2079 ns/op               0 B/op          0 allocs/op
-BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node
-BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7574332               167.3 ns/op             0 B/op          0 allocs/op
-BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7129860               167.2 ns/op             0 B/op          0 allocs/op
-BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7130806               168.1 ns/op             0 B/op          0 allocs/op
-BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(6_bits)_and_high_throughput_(13_bits)_per_node-8                       7090597               170.0 ns/op             0 B/op          0 allocs/op
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(11_bits)_and_moderate_throughput_(10_bits)_per_node
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(11_bits)_and_moderate_throughput_(10_bits)_per_node-8                1000000           1158 ns/op        0 B/op          0 allocs/op
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(11_bits)_and_moderate_throughput_(10_bits)_per_node-8                 896391           1163 ns/op        0 B/op          0 allocs/op
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(11_bits)_and_moderate_throughput_(10_bits)_per_node-8                1000000              1187 ns/op               0 B/op          0 allocs/op
+BenchmarkGet/Default_config_-_Tuned_for_high_distribution_of_nodes_(11_bits)_and_moderate_throughput_(10_bits)_per_node-8                1000000              1209 ns/op               0 B/op            0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(7_bits)_and_high_throughput_(14_bits)_per_node
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(7_bits)_and_high_throughput_(14_bits)_per_node-8                      11487432               103.1 ns/op             0 B/op            0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(7_bits)_and_high_throughput_(14_bits)_per_node-8                      12016778               103.7 ns/op             0 B/op            0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(7_bits)_and_high_throughput_(14_bits)_per_node-8                      11961061               102.9 ns/op             0 B/op            0 allocs/op
+BenchmarkGet/Custom_config_-_Tuned_for_low_distribution_of_nodes_(7_bits)_and_high_throughput_(14_bits)_per_node-8                      12601296               102.4 ns/op             0 B/op            0 allocs/op
 PASS
-ok      github.com/SaurabhGoyal/Snowflake/snowflake     10.675s
+ok      github.com/SaurabhGoyal/Snowflake/snowflake     11.124s
 ?       github.com/SaurabhGoyal/Snowflake/uid   [no test files]
-➜  uid_generator git:(sg_travis_integ) ✗
+➜  uid_generator git:(main) ✗
 ```
