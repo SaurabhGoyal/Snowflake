@@ -19,11 +19,35 @@ jobs:
         run: |
           go version
           go get -u golang.org/x/lint/golint
+          go install -v gotest.tools/gotestsum@latest
+          go get -d github.com/boumenot/gocover-cobertura@latest
+          go install github.com/boumenot/gocover-cobertura@latest
+          go get -d github.com/ggere/gototal-cobertura@latest
+          go install github.com/ggere/gototal-cobertura@latest
       - name: Build binary
         run: go build .
       - name: Linting
         run: |
           go vet
           golint .
-      - name: Run Tests with coverage
-        run: go test -v ./...
+      - name: Run tests with coverage
+        run: |
+          gotestsum --format testname --junitfile unit-tests.xml -- -coverprofile=coverage.out ./...
+          gocover-cobertura < coverage.out > cobertura-coverage.xml
+          gototal-cobertura < cobertura-coverage.xml
+          go tool cover -html=coverage.out -o cobertura-coverage.html
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-tests.xml
+          path: unit-tests.xml
+      - name: Upload coverage report XML
+        uses: actions/upload-artifact@v3
+        with:
+          name: cobertura-coverage.xml
+          path: cobertura-coverage.xml
+      - name: Upload coverage report HTML
+        uses: actions/upload-artifact@v3
+        with:
+          name: cobertura-coverage.html
+          path: cobertura-coverage.html
