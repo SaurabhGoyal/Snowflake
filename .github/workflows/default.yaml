@@ -50,14 +50,8 @@ jobs:
         with:
           name: cobertura-coverage.xml
           path: cobertura-coverage.xml
-      - name: Code Coverage Summary Report
-        uses: irongut/CodeCoverageSummary@v1.3.0
+      - name: Coverage report
+        uses: 5monkeys/cobertura-action@master
         with:
-          filename: cobertura-coverage.xml
-          badge: true
-          fail_below_min: true
-      - name: Add Coverage PR Comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          recreate: true
-          path: code-coverage-results.md
+          path: cobertura-coverage.xml
+          minimum_coverage: 75
