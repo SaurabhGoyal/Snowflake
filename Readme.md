@@ -1,4 +1,6 @@
 # Snowflake
+[![GoDoc](https://godoc.org/github.com/SaurabhGoyal/Snowflake?status.svg)](https://godoc.org/github.com/SaurabhGoyal/Snowflake) [![Go Report Card](https://goreportcard.com/badge/github.com/SaurabhGoyal/Snowflake)](https://goreportcard.com/report/github.com/SaurabhGoyal/Snowflake)
+
 Snowflake is a go package that provides a simple implementation of unique-id generation based on [Twitter's snowflake](https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake) logic.
 ```
 +--------------------------------------------------------------------------+
@@ -22,6 +24,7 @@ Project has been tested and benchmarked but not battle tested in production envi
 go get github.com/SaurabhGoyal/Snowflake
 ```
 - Use
+https://go.dev/play/p/QJfLzaTkzDR
 ```go
 package main
 

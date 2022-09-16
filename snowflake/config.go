@@ -23,10 +23,10 @@ type generatorConfig struct {
 
 /*
 InitGeneratorConfig generates a config to be used by generator to generate IDs.
-- Use latest possible epoch based on what timestamps are irrelevant by your app. This can increase the years that you can target.
-- Use higher or lower timestamp bits based on how long (generally in years) the lifecycle of a generated unique id should be.
-- Use higher or lower nodeID bits based on how many servers are going to be involved in unique id generation.
-- Above two values directly impact the range of unique ids that one server can generate per millisecond while being within the constraint of 64 bit.
+ - Use latest possible epoch based on what timestamps are irrelevant by your app. This can increase the years that you can target.
+ - Use higher or lower timestamp bits based on how long (generally in years) the lifecycle of a generated unique id should be.
+ - Use higher or lower nodeID bits based on how many servers are going to be involved in unique id generation.
+ - Above two values directly impact the range of unique ids that one server can generate per millisecond while being within the constraint of 64 bit.
 Choose above wisely as higher range per server gives better performance in high throughput systems.
 */
 func InitGeneratorConfig(epoch uint64, timestampBits uint64, nodeIDBits uint64) (generatorConfig, error) {
@@ -51,10 +51,10 @@ func InitGeneratorConfig(epoch uint64, timestampBits uint64, nodeIDBits uint64) 
 
 /*
 InitDefaultGeneratorConfig generates a default config suited to current applications.
-- Epoch - 2010/12/12
-- Timestamp bits - 42 (~139 years of id uniqueness)
-- NodeID bits - 11 (2048 servers)
-This in turn means 1048 numbers per milliosecond per server can be generated uniquely
+ - Epoch - 2010/12/12
+ - Timestamp bits - 42 (~139 years of id uniqueness)
+ - NodeID bits - 11 (2048 servers)
+This in turn means 1048 numbers per milliosecond per server can be generated uniquely.
 */
 func InitDefaultGeneratorConfig() (generatorConfig, error) {
 	return InitGeneratorConfig(uint64(defaultEpoch), defaultTimestampBits, defaultNodeIDBits)

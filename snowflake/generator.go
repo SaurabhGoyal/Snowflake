@@ -40,7 +40,7 @@ func (gen *generator) Get() (uint64, error) {
 }
 
 /*
-InitGenerator initialised a unique id generator as per Snowflake algo using given config.
+InitGenerator initialises a unique id generator as per Snowflake algo using given config.
 */
 func InitGenerator(config generatorConfig, nodeID uint64) (uid.Generator, error) {
 	maxNodeID := uint64(1<<config.nodeIDBits - 1)
