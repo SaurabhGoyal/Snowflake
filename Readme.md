@@ -12,8 +12,8 @@ Snowflake is a go package that provides a simple implementation of unique-id gen
 Project has been tested and benchmarked but not battle tested in production environment yet.
 
 ## Logic
-- There are two components - `generator` and `generatorConfig`. Both are private to prevent initialisation with unexpected values. Use exported constructors which perform validations.
-- `generatorConfig` has a default implementation which provides 2 ^ 21 (2097152) unique ids per millisecond (1024 per node, across 2048 nodes) till year 2149 (~139 years from epoch). These values can be customised to support higher throughput or longer period of valid generation of unique IDs. Default config uses following details -
+- There are two components - `Generator` and `Config`.
+- `Config` has a default implementation which provides 2 ^ 21 (2097152) unique ids per millisecond (1024 per node, across 2048 nodes) till year 2149 (~139 years from epoch). These values can be customised to support higher throughput or longer period of valid generation of unique IDs. Default config uses following details -
   - epoch - `2010/12/12/23/59/59/0 UTC`.
   - timestampBits - 42
   - nodeIdBits - 11
@@ -35,8 +35,8 @@ import (
 )
 
 func main() {
-	// With default config
-    config, _ := snowflake.InitDefaultGeneratorConfig()
+    // With default config
+    config, _ := snowflake.InitDefaultConfig()
     uidGen, _ := snowflake.InitGenerator(config, 1)
     uid, err := uidGen.Get()
     if err != nil {
@@ -46,7 +46,7 @@ func main() {
 
     // With custom config (Ex.- less lifetime, more servers, less throughput per server)
     epoch := uint64(time.Date(2015, 12, 12, 23, 59, 59, 0, time.UTC).UnixMilli())
-    config, _ = snowflake.InitGeneratorConfig(epoch, 41, 14)
+    config, _ = snowflake.InitConfig(epoch, 41, 14)
     uidGen, _ = snowflake.InitGenerator(config, 1)
     uid, err = uidGen.Get()
     if err != nil {

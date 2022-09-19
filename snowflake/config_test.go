@@ -21,7 +21,7 @@ func validateConfig(t *testing.T, config Config, err error, expectedTimeStampShi
 	}
 }
 
-func TestInitDefaultGeneratorConfig(t *testing.T) {
+func TestInitDefaultConfig(t *testing.T) {
 	tests := []struct {
 		name                   string
 		expectedTimeStampShift uint64
@@ -43,7 +43,7 @@ func TestInitDefaultGeneratorConfig(t *testing.T) {
 	}
 }
 
-func TestInitGeneratorConfig(t *testing.T) {
+func TestInitConfig(t *testing.T) {
 	tests := []struct {
 		name                   string
 		epoch                  uint64
