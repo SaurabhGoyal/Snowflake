@@ -97,3 +97,63 @@ func TestInitConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestString(t *testing.T) {
+	tests := []struct {
+		name            string
+		epoch           uint64
+		timestampBits   uint64
+		nodeIDBits      uint64
+		expectedMessage string
+	}{
+		{
+			name:          "Success - 1",
+			epoch:         uint64(time.Date(2020, 12, 12, 23, 59, 59, 0, time.UTC).UnixMilli()),
+			timestampBits: 51,
+			nodeIDBits:    6,
+			expectedMessage: `
+==============================================================================
+Initialising Snowflake Unique ID Generator Config
+==============================================================================
+Config (64 bit ID)
++------------------------------------------------------------------------+
+| 1 Bit Unused | 51 Bit Timestamp |  6 Bit NodeID  | 6 Bit Sequence ID |
++------------------------------------------------------------------------+
+Output (TP = requests per millisecond)
++---------------------------------------------------------------------------------+
+| 71404.10 Years of uniqueness lifetime | 4096 TP across 64 servers  | 64 TP per server |
++---------------------------------------------------------------------------------+
+==============================================================================
+`,
+		},
+		{
+			name:          "Success - 2",
+			epoch:         uint64(time.Date(2020, 12, 12, 23, 59, 59, 0, time.UTC).UnixMilli()),
+			timestampBits: 41,
+			nodeIDBits:    12,
+			expectedMessage: `
+==============================================================================
+Initialising Snowflake Unique ID Generator Config
+==============================================================================
+Config (64 bit ID)
++------------------------------------------------------------------------+
+| 1 Bit Unused | 41 Bit Timestamp |  12 Bit NodeID  | 10 Bit Sequence ID |
++------------------------------------------------------------------------+
+Output (TP = requests per millisecond)
++---------------------------------------------------------------------------------+
+| 69.73 Years of uniqueness lifetime | 4194304 TP across 4096 servers  | 1024 TP per server |
++---------------------------------------------------------------------------------+
+==============================================================================
+`,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			config, _ := InitConfig(tc.epoch, tc.timestampBits, tc.nodeIDBits)
+			s := config.String()
+			if s != tc.expectedMessage {
+				t.Errorf("string mismatch - actual - [%s], expected - [%s]", s, tc.expectedMessage)
+			}
+		})
+	}
+}

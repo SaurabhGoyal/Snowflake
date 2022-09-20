@@ -12,6 +12,7 @@ const minAllowedBitsForTimestamp = uint64(40)
 const maxAllowedBitsForTimestampAndNodeID = uint64(59)
 const defaultTimestampBits = uint64(42)
 const defaultNodeIDBits = uint64(11)
+const millisecondInYear = 365 * 86400000
 
 /*
 Config contains the user given parameters and required values derived from those to dictate how unique-id generation process.
@@ -61,4 +62,28 @@ This in turn means 1048 numbers per milliosecond per server can be generated uni
 */
 func InitDefaultConfig() (Config, error) {
 	return InitConfig(defaultEpoch, defaultTimestampBits, defaultNodeIDBits)
+}
+
+func (config *Config) String() string {
+	maxTPS := 1 << (config.nodeIDBits + config.nodeIDShift)
+	maxServers := 1 << config.nodeIDBits
+	maxTPSPerServer := 1 << config.nodeIDShift
+	maxLifeTimeMS := 1 << config.timeStampBits
+	maxLifeTime := float64(maxLifeTimeMS) / millisecondInYear
+	output :=
+		`
+==============================================================================
+Initialising Snowflake Unique ID Generator Config
+==============================================================================
+Config (64 bit ID)
++------------------------------------------------------------------------+
+| 1 Bit Unused | %d Bit Timestamp |  %d Bit NodeID  | %d Bit Sequence ID |
++------------------------------------------------------------------------+
+Output (TP = requests per millisecond)
++---------------------------------------------------------------------------------+
+| %0.2f Years of uniqueness lifetime | %d TP across %d servers  | %d TP per server |
++---------------------------------------------------------------------------------+
+==============================================================================
+`
+	return fmt.Sprintf(output, config.timeStampBits, config.nodeIDBits, config.nodeIDShift, maxLifeTime, maxTPS, maxServers, maxTPSPerServer)
 }
